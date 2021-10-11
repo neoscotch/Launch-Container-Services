@@ -1,0 +1,19 @@
+var endpoint = require("@runkit/runkit/json-endpoint/1.0.0")
+
+var request = require("request") // peer dependency
+var requestPromise = require("request-promise")
+var cheerio = require("cheerio")
+
+endpoint(module.exports, async function(request)
+{
+    try {
+        var html = await requestPromise(request.query.url)
+        var page = cheerio.load(html)
+    } catch(e) {
+        return {error: "could not retrieve page"}
+    }
+
+    return {
+        title: page("title").text() || "no title"
+    }
+})
